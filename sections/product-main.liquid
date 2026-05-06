@@ -70,11 +70,21 @@
         </div>
 
         <div class="product-price">
-          <span class="product-price__current">{{ current_variant.price | money }}</span>
           {%- if current_variant.compare_at_price > current_variant.price -%}
-            <span class="product-price__compare">{{ current_variant.compare_at_price | money }}</span>
+            {%- assign discount_pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
+            <div class="product-price__discount-badge">-{{ discount_pct }}% OFF</div>
+          {%- endif -%}
+          <div class="product-price__row">
+            <span class="product-price__current">{{ current_variant.price | money }}</span>
+            {%- if current_variant.compare_at_price > current_variant.price -%}
+              <span class="product-price__compare">{{ current_variant.compare_at_price | money }}</span>
+            {%- endif -%}
+          </div>
+          {%- if current_variant.compare_at_price > current_variant.price -%}
             {%- assign savings = current_variant.compare_at_price | minus: current_variant.price -%}
-            <span class="product-price__savings">Ahorras {{ savings | money }}</span>
+            <div class="product-price__savings-label">
+              🎉 Ahorras <strong>{{ savings | money }}</strong> con esta oferta
+            </div>
           {%- endif -%}
         </div>
 
