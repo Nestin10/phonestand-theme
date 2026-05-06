@@ -181,6 +181,11 @@ function initColorSwatches() {
         submitBtn.disabled = !available;
         submitBtn.innerHTML = available ? '🛒 Añadir al carrito' : 'Agotado';
       }
+      const hotBadge = document.getElementById('badge-hot');
+      if (hotBadge) {
+        const cn = colorName.toLowerCase();
+        hotBadge.style.display = (cn.includes('negro') || cn.includes('black')) ? '' : 'none';
+      }
       const imageSrc = swatch.dataset.imageSrc;
       if (imageSrc) {
         const mainImg = document.getElementById('main-img');

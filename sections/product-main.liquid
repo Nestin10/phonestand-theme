@@ -56,8 +56,8 @@
       <div class="product-info">
 
         <div class="product-badges">
-          <span class="product-badge product-badge--hot">🔥 Más vendido</span>
-          <span class="product-badge product-badge--new">✨ En stock</span>
+          {%- assign first_v = current_product.variants.first.title | downcase -%}
+          <span class="product-badge product-badge--hot" id="badge-hot"{% unless first_v contains 'negro' or first_v contains 'black' %} style="display:none"{% endunless %}>🔥 Más vendido</span>
         </div>
 
         <h1 class="product-title">{{ current_product.title }}</h1>
