@@ -202,6 +202,30 @@ function initColorSwatches() {
   });
 }
 
+// Urgency counters
+function initUrgency() {
+  const stockEl = document.getElementById('stock-count');
+  const viewerEl = document.getElementById('viewer-count');
+  if (!stockEl && !viewerEl) return;
+
+  // Stock: fixed per session so it looks consistent (5–11)
+  const sessionStock = sessionStorage.getItem('urg_stock')
+    || String(Math.floor(Math.random() * 7) + 5);
+  sessionStorage.setItem('urg_stock', sessionStock);
+  if (stockEl) stockEl.textContent = sessionStock;
+
+  // Viewers: starts random (18–34), fluctuates every ~20s
+  if (viewerEl) {
+    let viewers = Math.floor(Math.random() * 17) + 18;
+    viewerEl.textContent = viewers;
+    setInterval(() => {
+      const delta = Math.random() < 0.5 ? 1 : -1;
+      viewers = Math.min(38, Math.max(12, viewers + delta));
+      viewerEl.textContent = viewers;
+    }, 18000 + Math.random() * 8000);
+  }
+}
+
 // Init on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   initProductForm();
@@ -210,5 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initStickyATC();
   initHeaderScroll();
   initColorSwatches();
+  initUrgency();
   updateCartCount();
 });
