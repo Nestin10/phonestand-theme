@@ -266,6 +266,40 @@ h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
 .color-swatch.active { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--clr-accent); }
 .color-swatch[data-available="false"]::after { content: ''; position: absolute; top: 50%; left: 50%; width: 130%; height: 2px; background: rgba(0,0,0,.4); transform: translate(-50%,-50%) rotate(-45deg); border-radius: 2px; }
 
+/* ── Mobile product layout ─────────────────────────────── */
+@media (max-width: 767px) {
+  .product-main { padding: 16px 0 32px; }
+  .product-main__grid { gap: 16px; }
+
+  /* Smaller gallery so price + swatches are visible above the fold */
+  .product-gallery__main { aspect-ratio: 4/3; max-height: 68vw; }
+  /* Hide thumbs on mobile — swatches already change the photo */
+  .product-gallery__thumbs { display: none; }
+
+  /* Reorder info column: price → swatches → qty+buttons → description */
+  .product-info { display: flex; flex-direction: column; }
+  .product-badges         { order: 1; margin-bottom: 6px; }
+  .product-title          { order: 2; margin-bottom: 6px; font-size: 1.3rem; }
+  .product-rating         { order: 3; margin-bottom: 8px; }
+  .product-price          { order: 4; margin-bottom: 12px; padding: 10px 14px; }
+  .product-price__current { font-size: 1.75rem; }
+  .product-price__savings-label { display: none; }
+  #product-form           { order: 5; }
+  .product-short-description { order: 6; margin-bottom: 12px; }
+  .trust-badges           { order: 7; }
+  .payment-icons          { order: 8; }
+
+  /* Tighter form controls */
+  .color-selector  { margin-bottom: 12px; }
+  .quantity-selector { margin-bottom: 10px; }
+  .product-form__actions { gap: 8px; margin-bottom: 14px; }
+
+  /* Shorter description list on mobile */
+  .product-short-description ul { gap: 6px; }
+  .product-short-description li { font-size: .875rem; }
+}
+/* ─────────────────────────────────────────────────────── */
+
 /* Trust Badges */
 .trust-badges {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
