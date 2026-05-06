@@ -7,7 +7,7 @@
       <a href="/" class="btn btn--primary">Ver producto</a>
     </div>
   {%- else -%}
-    <form action="/cart" method="post">
+    <form action="/cart" method="post" id="cart-form">
 
       <div class="cart-items">
         {%- for item in cart.items -%}
@@ -17,12 +17,23 @@
                 <img src="{{ item.image | image_url: width: 160, height: 160, crop: 'center' }}" alt="{{ item.title | escape }}" width="80" height="80" loading="lazy">
               </a>
             </div>
-            <div>
+            <div class="cart-item__details">
               <div class="cart-item__title"><a href="{{ item.url }}">{{ item.product.title }}</a></div>
               {%- unless item.variant.title == 'Default Title' -%}
-                <div class="cart-item__price" style="font-size:.8rem;margin-top:2px;">{{ item.variant.title }}</div>
+                <div class="cart-item__variant">{{ item.variant.title }}</div>
               {%- endunless -%}
-              <div class="cart-item__price">{{ item.price | money }} × {{ item.quantity }}</div>
+              <div class="cart-item__price">{{ item.price | money }} c/u</div>
+              <div class="cart-item__controls">
+                <div class="cart-qty">
+                  <button type="button" class="cart-qty__btn" data-cart-minus data-key="{{ item.key }}">−</button>
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" class="cart-qty__input" data-key="{{ item.key }}">
+                  <button type="button" class="cart-qty__btn" data-cart-plus data-key="{{ item.key }}">+</button>
+                </div>
+                <button type="button" class="cart-item__remove" data-cart-remove data-key="{{ item.key }}" aria-label="Eliminar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                  Eliminar
+                </button>
+              </div>
             </div>
             <div class="cart-item__total">{{ item.line_price | money }}</div>
           </div>
@@ -51,3 +62,36 @@
     </form>
   {%- endif -%}
 </div>
+
+<script>
+function updateCart(key, qty) {
+  fetch('/cart/change.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: key, quantity: qty })
+  })
+  .then(r => r.json())
+  .then(() => location.reload());
+}
+
+document.querySelectorAll('[data-cart-minus]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.key;
+    const input = document.querySelector(`.cart-qty__input[data-key="${key}"]`);
+    const qty = Math.max(0, parseInt(input.value) - 1);
+    updateCart(key, qty);
+  });
+});
+
+document.querySelectorAll('[data-cart-plus]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.key;
+    const input = document.querySelector(`.cart-qty__input[data-key="${key}"]`);
+    updateCart(key, parseInt(input.value) + 1);
+  });
+});
+
+document.querySelectorAll('[data-cart-remove]').forEach(btn => {
+  btn.addEventListener('click', () => updateCart(btn.dataset.key, 0));
+});
+</script>
