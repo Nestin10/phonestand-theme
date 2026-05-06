@@ -1,0 +1,25 @@
+<footer class="footer" role="contentinfo">
+  <div class="container footer__inner">
+
+    <a href="/" class="footer__logo">Phone<span>Stand</span></a>
+
+    <nav class="footer__links" aria-label="Enlaces del pie de página">
+      <a href="/pages/politica-de-privacidad">Política de privacidad</a>
+      <a href="/pages/politica-de-devolucion">Devoluciones</a>
+      <a href="/pages/terminos-de-servicio">Términos y condiciones</a>
+      <a href="/pages/contacto">Contacto</a>
+    </nav>
+
+    <p class="footer__copy">
+      © {{ 'now' | date: '%Y' }} {{ shop.name }}. Todos los derechos reservados.
+    </p>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Pie de página",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ page_description | default: shop.description | escape }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | img_url: '32x32' }}">
+  {%- endif -%}
+
+  <title>
+    {{ page_title | default: shop.name }}
+    {%- unless page_title contains shop.name -%} – {{ shop.name }}{%- endunless -%}
+  </title>
+
+  {{ content_for_header }}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+</head>
+<body class="template-{{ template.name }}">
+
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+
+  <div id="cart-notification" class="cart-notification">
+    <div class="cart-notification__inner">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <span>¡Añadido al carrito!</span>
+      <a href="/cart" class="cart-notification__link">Ver carrito →</a>
+    </div>
+  </div>
+
+  {% section 'header' %}
+
+  <main id="main-content" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  <script>
+    document.documentElement.classList.remove('no-js');
+    window.shopMoneyFormat = {{ shop.money_format | json }};
+  </script>
+  {{ 'theme.js' | asset_url | script_tag }}
+</body>
+</html>

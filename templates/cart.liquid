@@ -1,0 +1,53 @@
+<div class="container cart-page">
+  <h1>Tu carrito</h1>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-empty">
+      <p>Tu carrito está vacío.</p>
+      <a href="/" class="btn btn--primary">Ver producto</a>
+    </div>
+  {%- else -%}
+    <form action="/cart" method="post">
+
+      <div class="cart-items">
+        {%- for item in cart.items -%}
+          <div class="cart-item">
+            <div class="cart-item__image">
+              <a href="{{ item.url }}">
+                <img src="{{ item.image | img_url: '160x160', crop: 'center' }}" alt="{{ item.title | escape }}" width="80" height="80" loading="lazy">
+              </a>
+            </div>
+            <div>
+              <div class="cart-item__title"><a href="{{ item.url }}">{{ item.product.title }}</a></div>
+              {%- unless item.variant.title == 'Default Title' -%}
+                <div class="cart-item__price" style="font-size:.8rem;margin-top:2px;">{{ item.variant.title }}</div>
+              {%- endunless -%}
+              <div class="cart-item__price">{{ item.price | money }} × {{ item.quantity }}</div>
+            </div>
+            <div class="cart-item__total">{{ item.line_price | money }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="cart-summary">
+        <div class="cart-summary__row">
+          <span>Subtotal</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+        <div class="cart-summary__row">
+          <span>Envío</span>
+          <span style="color:var(--clr-success);font-weight:600;">Gratis</span>
+        </div>
+        <div class="cart-summary__total">
+          <span>Total</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+        <a href="/checkout" class="btn btn--primary btn--lg btn--full">Finalizar compra →</a>
+        <div style="margin-top:12px;text-align:center;">
+          <a href="/" style="font-size:.875rem;color:var(--clr-gray-500);text-decoration:underline;">← Seguir comprando</a>
+        </div>
+      </div>
+
+    </form>
+  {%- endif -%}
+</div>

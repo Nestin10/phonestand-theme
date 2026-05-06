@@ -1,0 +1,22 @@
+{
+  "general": {
+    "search": { "title": "Buscar" },
+    "pagination": { "previous": "Anterior", "next": "Siguiente" }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Añadir al carrito",
+      "sold_out": "Agotado",
+      "unavailable": "No disponible",
+      "quantity": "Cantidad"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Carrito",
+      "empty": "Tu carrito está vacío",
+      "checkout": "Finalizar compra",
+      "subtotal": "Subtotal"
+    }
+  }
+}

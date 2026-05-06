@@ -1,0 +1,193 @@
+{%- liquid
+  if product
+    assign current_product = product
+  elsif section.settings.product != blank
+    assign current_product = all_products[section.settings.product]
+  else
+    assign current_product = collections.all.products.first
+  endif
+  assign current_variant = current_product.selected_or_first_available_variant
+-%}
+
+<section class="product-main">
+  <div class="container">
+    <div class="product-main__grid">
+
+      <!-- ===== GALERÍA ===== -->
+      <div class="product-gallery">
+        <div class="product-gallery__main">
+          {%- if current_product.featured_image -%}
+            <img
+              src="{{ current_product.featured_image | img_url: '800x800', crop: 'center' }}"
+              alt="{{ current_product.featured_image.alt | default: current_product.title | escape }}"
+              width="800" height="800"
+              loading="eager"
+            >
+          {%- else -%}
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:24px;aspect-ratio:1;">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if current_product.images.size > 1 -%}
+          <div class="product-gallery__thumbs">
+            {%- for image in current_product.images limit: 6 -%}
+              <div class="product-gallery__thumb">
+                <img
+                  src="{{ image | img_url: '100x100', crop: 'center' }}"
+                  alt="{{ image.alt | default: current_product.title | escape }}"
+                  width="100" height="100" loading="lazy"
+                >
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- ===== INFO ===== -->
+      <div class="product-info">
+
+        <div class="product-badges">
+          <span class="product-badge product-badge--hot">🔥 Más vendido</span>
+          <span class="product-badge product-badge--new">✨ En stock</span>
+        </div>
+
+        <h1 class="product-title">{{ current_product.title }}</h1>
+
+        <div class="product-rating" aria-label="4.8 de 5 estrellas">
+          <div class="product-rating__stars" aria-hidden="true">★★★★★</div>
+          <span class="product-rating__count">4.8 &nbsp;·&nbsp;
+            <a href="#reviews" style="color:var(--clr-gray-500);text-decoration:underline;">127 valoraciones</a>
+          </span>
+        </div>
+
+        <div class="product-price">
+          <span class="product-price__current">{{ current_variant.price | money }}</span>
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <span class="product-price__compare">{{ current_variant.compare_at_price | money }}</span>
+            {%- assign savings = current_variant.compare_at_price | minus: current_variant.price -%}
+            <span class="product-price__savings">Ahorras {{ savings | money }}</span>
+          {%- endif -%}
+        </div>
+
+        <div class="product-short-description">
+          <ul>
+            <li>Soporte ajustable — horizontal y vertical</li>
+            <li>Tarjetero integrado para 1-2 tarjetas</li>
+            <li>Adhesivo ultrafuerte, sin dejar residuos</li>
+            <li>Compatible con cualquier smartphone</li>
+            <li>Material de cuero sintético premium</li>
+          </ul>
+        </div>
+
+        <form id="product-form" action="/cart/add" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          {%- if current_product.variants.size > 1 -%}
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:.875rem;font-weight:600;color:var(--clr-gray-700);margin-bottom:8px;">Variante:</label>
+              <select name="id" style="width:100%;padding:10px 14px;border:1.5px solid var(--clr-gray-200);border-radius:8px;font-size:1rem;font-family:inherit;background:white;cursor:pointer;">
+                {%- for variant in current_product.variants -%}
+                  <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
+                    {{ variant.title }} — {{ variant.price | money }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+
+          <div class="quantity-selector">
+            <label class="quantity-selector__label" for="qty">Cantidad:</label>
+            <div class="quantity-selector__control">
+              <button type="button" class="quantity-selector__btn" data-minus aria-label="Reducir">−</button>
+              <input type="number" id="qty" name="quantity" value="1" min="1" class="quantity-selector__input">
+              <button type="button" class="quantity-selector__btn" data-plus aria-label="Aumentar">+</button>
+            </div>
+          </div>
+
+          <div class="product-form__actions">
+            <button
+              type="submit"
+              name="add"
+              class="btn btn--primary btn--lg btn--full"
+              data-submit-btn
+              {%- unless current_variant.available -%}disabled{%- endunless -%}
+            >
+              {%- if current_variant.available -%}
+                🛒 Añadir al carrito
+              {%- else -%}
+                Agotado
+              {%- endif -%}
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--black btn--lg btn--full"
+              onclick="buyNow(event, '{{ current_variant.id }}')"
+              {%- unless current_variant.available -%}disabled{%- endunless -%}
+            >
+              ⚡ Comprar ahora
+            </button>
+          </div>
+        </form>
+
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <svg class="trust-badge__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <span class="trust-badge__text">Envío gratuito</span>
+          </div>
+          <div class="trust-badge">
+            <svg class="trust-badge__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span class="trust-badge__text">Pago 100% seguro</span>
+          </div>
+          <div class="trust-badge">
+            <svg class="trust-badge__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            <span class="trust-badge__text">30 días devolución</span>
+          </div>
+        </div>
+
+        <div class="payment-icons">
+          <span class="payment-icons__label">Pago seguro con:</span>
+          <div class="payment-icons__list">
+            {%- for type in shop.enabled_payment_types -%}
+              {{ type | payment_type_svg_tag: class: 'payment-icon' }}
+            {%- endfor -%}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sticky ATC (solo móvil) -->
+<div class="sticky-atc" aria-hidden="true">
+  <div class="sticky-atc__info">
+    <div class="sticky-atc__name">{{ current_product.title | truncate: 38 }}</div>
+    <div class="sticky-atc__price">{{ current_variant.price | money }}</div>
+  </div>
+  <button class="btn btn--primary" data-sticky-atc-btn>Añadir al carrito</button>
+</div>
+
+{% schema %}
+{
+  "name": "Producto principal",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto a mostrar (para página de inicio)"
+    }
+  ]
+}
+{% endschema %}
