@@ -138,6 +138,9 @@
                     data-variant-id="{{ variant.id }}"
                     data-color-name="{{ variant.title }}"
                     data-available="{{ variant.available }}"
+                    {%- if variant.featured_image -%}
+                    data-image-src="{{ variant.featured_image | image_url: width: 1600 }}"
+                    {%- endif -%}
                     style="background:{{ sw }};"
                     title="{{ variant.title }}"
                     aria-label="Color {{ variant.title }}"

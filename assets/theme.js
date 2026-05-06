@@ -181,6 +181,18 @@ function initColorSwatches() {
         submitBtn.disabled = !available;
         submitBtn.innerHTML = available ? '🛒 Añadir al carrito' : 'Agotado';
       }
+      const imageSrc = swatch.dataset.imageSrc;
+      if (imageSrc) {
+        const mainImg = document.getElementById('main-img');
+        if (mainImg) {
+          mainImg.style.opacity = '0';
+          setTimeout(() => {
+            mainImg.src = imageSrc;
+            mainImg.style.opacity = '1';
+          }, 150);
+        }
+        document.querySelectorAll('.product-gallery__thumb').forEach(t => t.classList.remove('active'));
+      }
     });
   });
 }
