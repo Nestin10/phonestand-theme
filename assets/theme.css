@@ -173,7 +173,7 @@ h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
   border-radius: var(--radius-lg); overflow: hidden;
   background: #fff; aspect-ratio: 1; position: relative;
 }
-.product-gallery__main img { width: 100%; height: 100%; object-fit: contain; transition: opacity var(--transition); }
+.product-gallery__main img { width: 100%; height: auto; object-fit: contain; display: block; transition: opacity var(--transition); }
 .product-gallery__thumbs { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
 .product-gallery__thumb {
   width: 72px; height: 72px;
@@ -271,8 +271,9 @@ h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
   .product-main { padding: 16px 0 32px; }
   .product-main__grid { gap: 16px; }
 
-  /* Smaller gallery so price + swatches are visible above the fold */
-  .product-gallery__main { aspect-ratio: 4/3; max-height: 68vw; }
+  /* Gallery: natural photo proportions, no fixed ratio */
+  .product-gallery__main { aspect-ratio: unset; height: auto; max-height: none; }
+  .product-gallery__main img { height: auto; object-fit: unset; }
   /* Hide thumbs on mobile — swatches already change the photo */
   .product-gallery__thumbs { display: none; }
 
