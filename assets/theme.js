@@ -158,6 +158,33 @@ function initHeaderScroll() {
   onScroll();
 }
 
+// Color swatch selector
+function initColorSwatches() {
+  const swatches = document.querySelectorAll('.color-swatch');
+  if (!swatches.length) return;
+  swatches.forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      swatches.forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      const variantId = swatch.dataset.variantId;
+      const colorName = swatch.dataset.colorName;
+      const available = swatch.dataset.available === 'true';
+      const idInput = document.querySelector('[name="id"]');
+      if (idInput) idInput.value = variantId;
+      const nameEl = document.getElementById('selected-color-name');
+      if (nameEl) nameEl.textContent = colorName;
+      document.querySelectorAll('[onclick*="buyNow"]').forEach(btn => {
+        btn.setAttribute('onclick', `buyNow(event, '${variantId}')`);
+      });
+      const submitBtn = document.querySelector('[data-submit-btn]');
+      if (submitBtn) {
+        submitBtn.disabled = !available;
+        submitBtn.innerHTML = available ? '🛒 Añadir al carrito' : 'Agotado';
+      }
+    });
+  });
+}
+
 // Init on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   initProductForm();
@@ -165,5 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initGallery();
   initStickyATC();
   initHeaderScroll();
+  initColorSwatches();
   updateCartCount();
 });
