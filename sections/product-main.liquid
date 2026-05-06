@@ -15,16 +15,17 @@
 
       <!-- ===== GALERÍA ===== -->
       <div class="product-gallery">
-        <div class="product-gallery__main">
+        <div class="product-gallery__main" id="gallery-main">
           {%- if current_product.featured_image -%}
             <img
-              src="{{ current_product.featured_image | img_url: '800x800', crop: 'center' }}"
+              src="{{ current_product.featured_image | image_url: width: 800, height: 800, crop: 'center' }}"
               alt="{{ current_product.featured_image.alt | default: current_product.title | escape }}"
               width="800" height="800"
               loading="eager"
+              id="main-img"
             >
           {%- else -%}
-            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:24px;aspect-ratio:1;">
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;aspect-ratio:1;">
               <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5">
                 <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
                 <polyline points="21 15 16 10 5 21"/>
@@ -36,11 +37,12 @@
         {%- if current_product.images.size > 1 -%}
           <div class="product-gallery__thumbs">
             {%- for image in current_product.images limit: 6 -%}
-              <div class="product-gallery__thumb">
+              <div class="product-gallery__thumb{% if forloop.first %} active{% endif %}"
+                   data-src="{{ image | image_url: width: 800, height: 800, crop: 'center' }}">
                 <img
-                  src="{{ image | img_url: '100x100', crop: 'center' }}"
+                  src="{{ image | image_url: width: 160, height: 160, crop: 'center' }}"
                   alt="{{ image.alt | default: current_product.title | escape }}"
-                  width="100" height="100" loading="lazy"
+                  width="160" height="160" loading="lazy"
                 >
               </div>
             {%- endfor -%}
@@ -115,20 +117,14 @@
               name="add"
               class="btn btn--primary btn--lg btn--full"
               data-submit-btn
-              {%- unless current_variant.available -%}disabled{%- endunless -%}
             >
-              {%- if current_variant.available -%}
-                🛒 Añadir al carrito
-              {%- else -%}
-                Agotado
-              {%- endif -%}
+              🛒 Añadir al carrito
             </button>
 
             <button
               type="button"
               class="btn btn--black btn--lg btn--full"
               onclick="buyNow(event, '{{ current_variant.id }}')"
-              {%- unless current_variant.available -%}disabled{%- endunless -%}
             >
               ⚡ Comprar ahora
             </button>
@@ -178,6 +174,23 @@
   </div>
   <button class="btn btn--primary" data-sticky-atc-btn>Añadir al carrito</button>
 </div>
+
+<script>
+  // Thumbnail gallery switch
+  document.querySelectorAll('.product-gallery__thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const mainImg = document.getElementById('main-img');
+      if (!mainImg) return;
+      document.querySelectorAll('.product-gallery__thumb').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+      mainImg.style.opacity = '0';
+      setTimeout(() => {
+        mainImg.src = thumb.dataset.src;
+        mainImg.style.opacity = '1';
+      }, 150);
+    });
+  });
+</script>
 
 {% schema %}
 {

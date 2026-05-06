@@ -14,7 +14,7 @@
           <div class="cart-item">
             <div class="cart-item__image">
               <a href="{{ item.url }}">
-                <img src="{{ item.image | img_url: '160x160', crop: 'center' }}" alt="{{ item.title | escape }}" width="80" height="80" loading="lazy">
+                <img src="{{ item.image | image_url: width: 160, height: 160, crop: 'center' }}" alt="{{ item.title | escape }}" width="80" height="80" loading="lazy">
               </a>
             </div>
             <div>
