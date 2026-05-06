@@ -16,13 +16,14 @@
       <!-- ===== GALERÍA ===== -->
       <div class="product-gallery">
         <div class="product-gallery__main" id="gallery-main">
-          {%- if current_product.featured_image -%}
+          {%- assign main_image = current_product.featured_image | default: current_product.images.first -%}
+          {%- if main_image -%}
             <img
-              src="{{ current_product.featured_image | image_url: width: 800, height: 800, crop: 'center' }}"
-              alt="{{ current_product.featured_image.alt | default: current_product.title | escape }}"
-              width="800" height="800"
+              src="{{ main_image.src }}"
+              alt="{{ main_image.alt | default: current_product.title | escape }}"
               loading="eager"
               id="main-img"
+              style="width:100%;height:100%;object-fit:cover;"
             >
           {%- else -%}
             <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;aspect-ratio:1;">
@@ -38,11 +39,12 @@
           <div class="product-gallery__thumbs">
             {%- for image in current_product.images limit: 6 -%}
               <div class="product-gallery__thumb{% if forloop.first %} active{% endif %}"
-                   data-src="{{ image | image_url: width: 800, height: 800, crop: 'center' }}">
+                   data-src="{{ image.src }}">
                 <img
-                  src="{{ image | image_url: width: 160, height: 160, crop: 'center' }}"
+                  src="{{ image.src }}"
                   alt="{{ image.alt | default: current_product.title | escape }}"
-                  width="160" height="160" loading="lazy"
+                  loading="lazy"
+                  style="width:100%;height:100%;object-fit:cover;"
                 >
               </div>
             {%- endfor -%}
