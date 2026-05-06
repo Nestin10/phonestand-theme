@@ -98,49 +98,75 @@
           </ul>
         </div>
 
+        {%- liquid
+          assign negro_variant = nil
+          for variant in current_product.variants
+            assign vt = variant.title | downcase
+            if vt contains 'negro' or vt contains 'black'
+              assign negro_variant = variant
+              break
+            endif
+          endfor
+          assign default_variant = negro_variant | default: current_variant
+        -%}
         <form id="product-form" action="/cart/add" method="post" enctype="multipart/form-data">
-          <input type="hidden" name="id" value="{{ current_variant.id }}">
+          <input type="hidden" name="id" value="{{ default_variant.id }}">
 
           {%- if current_product.variants.size > 1 -%}
             <div class="color-selector">
               <div class="color-selector__label">
-                Color: <span id="selected-color-name">{{ current_product.variants.first.title }}</span>
+                Color: <span id="selected-color-name">{{ default_variant.title }}</span>
               </div>
               <div class="color-selector__swatches">
+                {%- comment -%}Negro primero{%- endcomment -%}
                 {%- for variant in current_product.variants -%}
+                  {%- assign vt = variant.title | downcase -%}
+                  {%- unless vt contains 'negro' or vt contains 'black' -%}{%- continue -%}{%- endunless -%}
                   {%- liquid
-                    assign v = variant.title | downcase
-                    if v contains 'negro' or v contains 'black'
-                      assign sw = '#1a1a1a'
-                    elsif v contains 'azul' or v contains 'blue'
+                    assign sw = '#1a1a1a'
+                  -%}
+                  <button type="button"
+                    class="color-swatch active"
+                    data-variant-id="{{ variant.id }}"
+                    data-color-name="{{ variant.title }}"
+                    data-available="{{ variant.available }}"
+                    {%- if variant.featured_image %} data-image-src="{{ variant.featured_image | image_url: width: 1600 }}"{% endif %}
+                    style="background:{{ sw }};"
+                    title="{{ variant.title }}"
+                    aria-label="Color {{ variant.title }}"
+                  ></button>
+                {%- endfor -%}
+                {%- comment -%}Resto de colores{%- endcomment -%}
+                {%- for variant in current_product.variants -%}
+                  {%- assign vt = variant.title | downcase -%}
+                  {%- if vt contains 'negro' or vt contains 'black' -%}{%- continue -%}{%- endif -%}
+                  {%- liquid
+                    if vt contains 'azul' or vt contains 'blue'
                       assign sw = '#3b82f6'
-                    elsif v contains 'rosa' or v contains 'pink'
+                    elsif vt contains 'rosa' or vt contains 'pink'
                       assign sw = '#f472b6'
-                    elsif v contains 'lila' or v contains 'purple' or v contains 'morado'
+                    elsif vt contains 'lila' or vt contains 'purple' or vt contains 'morado'
                       assign sw = '#a855f7'
-                    elsif v contains 'gris' or v contains 'gray' or v contains 'grey'
+                    elsif vt contains 'gris' or vt contains 'gray' or vt contains 'grey'
                       assign sw = '#9ca3af'
-                    elsif v contains 'blanco' or v contains 'white'
+                    elsif vt contains 'blanco' or vt contains 'white'
                       assign sw = '#f9fafb'
-                    elsif v contains 'rojo' or v contains 'red'
+                    elsif vt contains 'rojo' or vt contains 'red'
                       assign sw = '#ef4444'
-                    elsif v contains 'verde' or v contains 'green'
+                    elsif vt contains 'verde' or vt contains 'green'
                       assign sw = '#22c55e'
-                    elsif v contains 'naranja' or v contains 'orange'
+                    elsif vt contains 'naranja' or vt contains 'orange'
                       assign sw = '#f97316'
                     else
                       assign sw = '#e5e7eb'
                     endif
                   -%}
-                  <button
-                    type="button"
-                    class="color-swatch{% if forloop.first %} active{% endif %}"
+                  <button type="button"
+                    class="color-swatch"
                     data-variant-id="{{ variant.id }}"
                     data-color-name="{{ variant.title }}"
                     data-available="{{ variant.available }}"
-                    {%- if variant.featured_image -%}
-                    data-image-src="{{ variant.featured_image | image_url: width: 1600 }}"
-                    {%- endif -%}
+                    {%- if variant.featured_image %} data-image-src="{{ variant.featured_image | image_url: width: 1600 }}"{% endif %}
                     style="background:{{ sw }};"
                     title="{{ variant.title }}"
                     aria-label="Color {{ variant.title }}"
